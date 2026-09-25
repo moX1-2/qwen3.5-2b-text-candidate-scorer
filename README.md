@@ -34,14 +34,7 @@ Next, I hope to explore more Jev-like capabilities, including multiple valid ans
 
 ## 实际实现
 
-```mermaid
-flowchart LR
-    A[问题描述与完整候选列表] --> B[为每个候选项构造判断提示]
-    B --> C[Qwen3.5 文本骨干与 LoRA]
-    C --> D[取末位有效 token 的隐藏状态]
-    D --> E[线性评分头]
-    E --> F[组内 Softmax 与交叉熵]
-```
+![JEV Candidate Scorer 模型架构](docs/figures/jev-candidate-scorer-architecture.png)
 
 每个候选分支都包含完整候选列表和当前待判断项。训练与本次评测分别计算各分支，当前实现没有复用公共前缀缓存。评分头使用 `nn.Linear(hidden_size, 1)`，包含偏置。LoRA 使用 `r=8`、`alpha=16`、`dropout=0.05`，目标层见 [`jev/train_cluster.py`](jev/train_cluster.py)。该模型用于候选排序与单选判断；checkpoint 的评分头不参与自由文本生成。
 
@@ -79,6 +72,7 @@ flowchart LR
 │   ├── common.py                     数据校验、提示构造与指标
 │   ├── convert_text_model.py         从原始 Qwen 权重提取文本骨干
 │   ├── train_cluster.py              本次实际使用的 LoRA 训练脚本
+│   ├── play.py                       第 5,000 步模型的交互试玩入口
 │   ├── evaluate_zero_shot.py        未微调基座的选项字母基线
 │   ├── monitor.py                    训练监测
 │   └── requirements.txt             模型运行依赖
@@ -89,6 +83,24 @@ flowchart LR
 ```
 
 公开仓库不包含原始题库、生成后的训练集、独立留出题的逐题文本或裁剪后的基座权重。相应构建脚本保留在仓库，数据需按来源许可自行获取。四个 checkpoint 压缩包包含完整训练恢复状态；推理只需其中的 `adapter/` 和 `score_head.pt`。
+
+## 交互试玩
+
+本地具备 CUDA GPU、`jev/.venv/`、裁剪后的基座权重和已解压的第 5,000 步 checkpoint 时，可运行：
+
+```bash
+cd jev-candidate-scorer
+jev/.venv/bin/python jev/play.py
+```
+
+依次输入问题和 2 至 5 个候选项。输入完候选项后，在下一项直接回车；随后输入希望选择的项数 `n`，直接回车则默认选择 1 项。脚本会列出各项相对概率、概率最高的前 `n` 项和本题耗时。在“问题”处直接回车退出。也可单次运行：
+
+```bash
+jev/.venv/bin/python jev/play.py --question "18 加 27 等于多少？" --top-k 2 \
+  --candidate 46 --candidate 45 --candidate 44
+```
+
+此入口默认加载 `result/unpacked/epoch-00-step-005000/`。`n` 必须介于 1 与候选项数量之间；多选结果只是候选评分的前 `n` 项排序，模型训练任务仍为单正确项判断。概率仅在当前给出的候选项之间归一化。本题耗时包含分词和推理，不含人工输入与首次模型加载。
 
 ## 复现入口
 
