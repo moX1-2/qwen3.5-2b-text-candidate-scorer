@@ -1,0 +1,55 @@
+{
+  "checkpoint_archives": [
+    {
+      "filename": "jev-20k-step1250.zip",
+      "checkpoint": "epoch-00-step-001250",
+      "step": 1250,
+      "bytes": 86474164,
+      "sha256": "e65d421604a18e21099ac263bc8bca07eb985eb7141b167c658c3a0cdc33790c",
+      "modified_metadata": [
+        "adapter/README.md",
+        "adapter/adapter_config.json"
+      ]
+    },
+    {
+      "filename": "jev-20k-step2500.zip",
+      "checkpoint": "epoch-01-step-002500",
+      "step": 2500,
+      "bytes": 86479925,
+      "sha256": "da502ec6de21e878f3f97ea7e778210dff9b7cb02c398a77cc2c3209d5aa6ed1",
+      "modified_metadata": [
+        "adapter/README.md",
+        "adapter/adapter_config.json"
+      ]
+    },
+    {
+      "filename": "jev-80k-step5000.zip",
+      "checkpoint": "epoch-00-step-005000",
+      "step": 5000,
+      "bytes": 86383517,
+      "sha256": "08c02afb79f583bea99cd9efa9142e2808ef265e35df0c99c2f907385fda1371",
+      "modified_metadata": [
+        "adapter/README.md",
+        "adapter/adapter_config.json"
+      ]
+    },
+    {
+      "filename": "jev-80k-step6500.zip",
+      "checkpoint": "epoch-01-step-006500",
+      "step": 6500,
+      "bytes": 86375542,
+      "sha256": "a29bdaf76a9c0532f18373d84a25ca9fcc797514380da82692914858203661af",
+      "modified_metadata": [
+        "adapter/README.md",
+        "adapter/adapter_config.json"
+      ]
+    }
+  ],
+  "base_model_included": false,
+  "benchmark_questions_included": false,
+  "selected_training_data_included": false,
+  "origin_artifacts": {
+    "1.docx": "f6654d3be27dd1ca2f6d070799b3d60a04dc82a9bf6cafd8a3944f9cf15a4730",
+    "arch_image.png": "be8d1024a6db8b2bafd56e1b1c06b6e5c4e2bd5e90e44f35b697aa82e07d3134"
+  }
+}

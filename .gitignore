@@ -1,0 +1,16 @@
+models/**/model.safetensors
+models/**/model.safetensors-*
+datasets/raw/
+datasets/selected/*.jsonl
+result/unpacked/
+result/evaluation-2026-09-25/run*/
+runs/
+.venv/
+**/.venv/
+__pycache__/
+**/__pycache__/
+*.pt
+*.safetensors
+*.parquet
+*.tar
+*.tar.gz

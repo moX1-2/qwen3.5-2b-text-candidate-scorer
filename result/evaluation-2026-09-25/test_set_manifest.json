@@ -1,0 +1,25 @@
+{
+  "seed": 20260925,
+  "excluded_fingerprint_count": 80996,
+  "heldout_count": 200,
+  "heldout_sources": {
+    "ai2_arc": 40,
+    "boolq": 40,
+    "commonsense_qa": 40,
+    "c3": 40,
+    "ocnli": 40
+  },
+  "available_by_pool": {
+    "boolq": 3145,
+    "commonsense_qa": 1096,
+    "ARC-Easy": 495,
+    "ARC-Challenge": 249,
+    "ocnli": 2825,
+    "c3": 3691
+  },
+  "custom_count": 20,
+  "sha256": {
+    "heldout_200.jsonl": "cbe727fde38ecd797ac081aa67d898177b6fd4cfbf0e14cc5f3f5efdd02c3995",
+    "custom_20.jsonl": "f03595f3c484db25eb12c04d59368e1ef80d88bcab65182eaf9a712c802fe64b"
+  }
+}

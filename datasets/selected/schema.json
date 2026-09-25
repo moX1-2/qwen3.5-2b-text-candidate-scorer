@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Bilingual candidate scoring example",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "description",
+    "candidates",
+    "gold_index",
+    "language",
+    "task_family",
+    "domain",
+    "source_dataset",
+    "source_id",
+    "source_split",
+    "source_role",
+    "license"
+  ],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "description": { "type": "string", "minLength": 1 },
+    "candidates": {
+      "type": "array",
+      "minItems": 2,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "gold_index": { "type": "integer", "minimum": 0 },
+    "language": { "enum": ["en", "zh"] },
+    "task_family": { "const": "multiple_choice" },
+    "domain": { "type": "string", "minLength": 1 },
+    "source_dataset": { "type": "string", "minLength": 1 },
+    "source_id": { "type": "string", "minLength": 1 },
+    "source_split": { "type": "string", "minLength": 1 },
+    "source_role": { "enum": ["train", "validation", "fewshot_example_used_for_training"] },
+    "license": { "type": "string", "minLength": 1 }
+  }
+}
