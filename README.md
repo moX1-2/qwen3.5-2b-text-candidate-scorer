@@ -4,7 +4,7 @@
 
 本项目输入包括问题描述和数量可变的候选项，为每个候选项给出分数，并在同一问题内归一化为概率。项目记录了数据整理、Qwen3.5 文本骨干提取、LoRA 训练、checkpoint 恢复、验证集监测以及四个 checkpoint 的同题评测过程。
 
-当前发布对应 **2026-09-25 的实验状态**。8 万题阶段训练到第 6,500 步后暂停。基座模型权重不随仓库发布，四个完整 checkpoint 分别提供 LoRA、评分头、优化器状态及训练位置。
+当前发布对应 **2026-09-25 的实验状态**。8 万题阶段训练到第 6,500 步后暂停。GitHub 仓库提供四个完整 checkpoint，不包含基座权重；[Hugging Face 模型仓库](https://huggingface.co/mx-2026/qwen3.5-2b-text-candidate-scorer)提供可直接下载试玩的文本基座、第 5,000 步 LoRA、评分头和推理脚本。
 
 ## 写在前面
 
@@ -82,16 +82,21 @@ Next, I hope to explore more Jev-like capabilities, including multiple valid ans
 └── checkpoints/                     四个完整 checkpoint 压缩包
 ```
 
-公开仓库不包含原始题库、生成后的训练集、独立留出题的逐题文本或裁剪后的基座权重。相应构建脚本保留在仓库，数据需按来源许可自行获取。四个 checkpoint 压缩包包含完整训练恢复状态；推理只需其中的 `adapter/` 和 `score_head.pt`。
+GitHub 仓库不包含原始题库、生成后的训练集、独立留出题的逐题文本或裁剪后的基座权重。相应构建脚本保留在仓库，数据需按来源许可自行获取。四个 checkpoint 压缩包包含完整训练恢复状态；推理只需其中的 `adapter/` 和 `score_head.pt`。完整推理包见 [Hugging Face 模型页](https://huggingface.co/mx-2026/qwen3.5-2b-text-candidate-scorer)。
 
 ## 交互试玩
 
-本地具备 CUDA GPU、`jev/.venv/`、裁剪后的基座权重和已解压的第 5,000 步 checkpoint 时，可运行：
+从 [Hugging Face](https://huggingface.co/mx-2026/qwen3.5-2b-text-candidate-scorer) 下载完整模型包后，可直接安装依赖并试玩。以下需要 Linux 和 CUDA GPU：
 
 ```bash
+hf download mx-2026/qwen3.5-2b-text-candidate-scorer \
+  --local-dir qwen3.5-2b-text-candidate-scorer
 cd qwen3.5-2b-text-candidate-scorer
+bash jev/setup_env.sh
 jev/.venv/bin/python jev/play.py
 ```
+
+如果已经在本地准备好文本基座、第 5,000 步 checkpoint 和 `jev/.venv/`，在项目目录运行 `jev/.venv/bin/python jev/play.py` 即可。
 
 依次输入问题和 2 至 5 个候选项。输入完候选项后，在下一项直接回车；随后输入希望选择的项数 `n`，直接回车则默认选择 1 项。脚本会列出各项相对概率、概率最高的前 `n` 项和本题耗时。在“问题”处直接回车退出。也可单次运行：
 
