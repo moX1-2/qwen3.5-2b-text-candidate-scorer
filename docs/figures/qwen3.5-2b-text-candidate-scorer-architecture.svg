@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="920" viewBox="0 0 1600 920" role="img" aria-labelledby="title description">
-  <title id="title">JEV Candidate Scorer 模型架构</title>
+  <title id="title">Qwen3.5-2B Text Candidate Scorer 模型架构</title>
   <desc id="description">问题和完整候选列表被构造成每个候选的独立判断提示。各分支经 Qwen3.5-2B 文本骨干与 LoRA、末位隐藏状态及共享线性评分头得到分数，组内 Softmax 后用于单选或前 N 项排序。训练使用单正确项交叉熵。</desc>
   <defs>
     <style>
@@ -25,7 +25,7 @@
   </defs>
 
   <rect width="1600" height="920" fill="#f8fbff"/>
-  <text x="52" y="58" class="title">JEV Candidate Scorer</text>
+  <text x="52" y="58" class="title">Qwen3.5-2B Text Candidate Scorer</text>
   <text x="52" y="88" class="subtitle">基于 Qwen3.5-2B 文本骨干的可变候选评分模型</text>
   <text x="1547" y="57" text-anchor="end" class="body" font-weight="700">8 万题 · 第 5,000 步</text>
   <text x="1547" y="83" text-anchor="end" class="small">单正确项训练 · 候选排序推理</text>
@@ -118,5 +118,5 @@
   <path d="M1144 756 H1189" class="line"/>
   <text x="820" y="827" class="small">Top n 不代表经过多正确项训练；概率只在当前候选集合内归一化。</text>
 
-  <text x="50" y="897" class="small">图：JEV Candidate Scorer 的实际训练与推理结构。结构以项目代码和第 5,000 步 checkpoint 为准。</text>
+  <text x="50" y="897" class="small">图：Qwen3.5-2B Text Candidate Scorer 的实际训练与推理结构。结构以项目代码和第 5,000 步 checkpoint 为准。</text>
 </svg>
