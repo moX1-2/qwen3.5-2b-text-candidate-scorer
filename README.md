@@ -1,10 +1,10 @@
-# Qwen3.5-2B Text Candidate Scorer：可变候选评分实验
+# Qwen3.5-2B Candidate Scorer：可变候选评分实验
 
 本仓库实现了一个双语候选项评分模型，受 TypeSafe AI 官方 Jev 的类型化决策接口启发，**与 TypeSafe AI 无关联**。官方 Jev 可回答 Choice、Score、Noul 三类问题；本项目仅实现单正确项候选选择，使用独立的 Qwen3.5 文本骨干、LoRA 和监督训练。官方产品背景、可核实来源及两者差异见[背景说明](docs/Jev背景与本项目关系.md)。
 
 本项目输入包括问题描述和数量可变的候选项，为每个候选项给出分数，并在同一问题内归一化为概率。项目记录了数据整理、Qwen3.5 文本骨干提取、LoRA 训练、checkpoint 恢复、验证集监测以及四个 checkpoint 的同题评测过程。
 
-当前发布对应 **2026-09-25 的实验状态**。8 万题阶段训练到第 6,500 步后暂停。GitHub 仓库提供四个完整 checkpoint，不包含基座权重；[Hugging Face 模型仓库](https://huggingface.co/mx-2026/qwen3.5-2b-text-candidate-scorer)提供可直接下载试玩的文本基座、第 5,000 步 LoRA、评分头和推理脚本。
+当前发布对应 **2026-09-25 的实验状态**。8 万题阶段训练到第 6,500 步后暂停。GitHub 仓库提供四个完整 checkpoint，不包含基座权重；[Hugging Face 模型仓库](https://huggingface.co/mx-2026/qwen3.5-2b-candidate-scorer)提供可直接下载试玩的文本基座、第 5,000 步 LoRA、评分头和推理脚本。
 
 ## 写在前面
 
@@ -58,7 +58,7 @@ Next, I hope to explore more Jev-like capabilities, including multiple valid ans
 
 ## 实际实现
 
-![Qwen3.5-2B Text Candidate Scorer 模型架构](docs/figures/qwen3.5-2b-text-candidate-scorer-architecture.png)
+![Qwen3.5-2B Candidate Scorer 模型架构](docs/figures/qwen3.5-2b-candidate-scorer-architecture.png)
 
 每个候选分支都包含完整候选列表和当前待判断项。训练与本次评测分别计算各分支，当前实现没有复用公共前缀缓存。评分头使用 `nn.Linear(hidden_size, 1)`，包含偏置。LoRA 使用 `r=8`、`alpha=16`、`dropout=0.05`，目标层见 [`jev/train_cluster.py`](jev/train_cluster.py)。该模型用于候选排序与单选判断；checkpoint 的评分头不参与自由文本生成。
 
@@ -106,16 +106,16 @@ Next, I hope to explore more Jev-like capabilities, including multiple valid ans
 └── checkpoints/                     四个完整 checkpoint 压缩包
 ```
 
-GitHub 仓库不包含原始题库、生成后的训练集、独立留出题的逐题文本或裁剪后的基座权重。相应构建脚本保留在仓库，数据需按来源许可自行获取。四个 checkpoint 压缩包包含完整训练恢复状态；推理只需其中的 `adapter/` 和 `score_head.pt`。完整推理包见 [Hugging Face 模型页](https://huggingface.co/mx-2026/qwen3.5-2b-text-candidate-scorer)。
+GitHub 仓库不包含原始题库、生成后的训练集、独立留出题的逐题文本或裁剪后的基座权重。相应构建脚本保留在仓库，数据需按来源许可自行获取。四个 checkpoint 压缩包包含完整训练恢复状态；推理只需其中的 `adapter/` 和 `score_head.pt`。完整推理包见 [Hugging Face 模型页](https://huggingface.co/mx-2026/qwen3.5-2b-candidate-scorer)。
 
 ## 交互试玩
 
-从 [Hugging Face](https://huggingface.co/mx-2026/qwen3.5-2b-text-candidate-scorer) 下载完整模型包后，可直接安装依赖并试玩。以下需要 Linux 和 CUDA GPU：
+从 [Hugging Face](https://huggingface.co/mx-2026/qwen3.5-2b-candidate-scorer) 下载完整模型包后，可直接安装依赖并试玩。以下需要 Linux 和 CUDA GPU：
 
 ```bash
-hf download mx-2026/qwen3.5-2b-text-candidate-scorer \
-  --local-dir qwen3.5-2b-text-candidate-scorer
-cd qwen3.5-2b-text-candidate-scorer
+hf download mx-2026/qwen3.5-2b-candidate-scorer \
+  --local-dir qwen3.5-2b-candidate-scorer
+cd qwen3.5-2b-candidate-scorer
 bash jev/setup_env.sh
 jev/.venv/bin/python jev/play.py
 ```
