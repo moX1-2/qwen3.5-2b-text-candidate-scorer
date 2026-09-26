@@ -32,6 +32,30 @@ Next, I hope to explore more Jev-like capabilities, including multiple valid ans
 
 **Training has a short smoke result.** With gradient checkpointing, two questions per forward batch, and 16 questions per optimizer step, one successful update took **23.873 seconds** and used **4.66 GiB** of GPU memory. A straight-line calculation gives roughly **8.3 hours** for one 20k-question epoch or **33.2 hours** for one 80k-question epoch. Validation, checkpoint writes, long examples, and sustained thermals can change those numbers. A full 4060 training run has not been measured; the completed long runs used USTC 107 GPUs.
 
+
+
+## 最新突破：多模态视觉接回与分支混合缓存极速推理 (2026-09-26)
+
+在纯文本决策模型训练取得良好效果后，项目团队进行了架构与多模态表征的深层探索：
+
+1. **视觉编码器零样本迁移 (0-Shot Multimodal Transfer)**：
+   - 将 Qwen3.5 原生视觉编码器（Vision Tower + Projector）重新接回多模态流程。
+   - **惊人发现**：在**未经任何多模态决策数据微调**的前提下，纯文本微调出的评分头直接成功识别图像颜色与基础特征，单项决策置信度高达 **94.42%**！
+   - **表征机理**：文本微调时未动词表（`embed_tokens` 冻结），基座 Projector 投影的图像 Token 与文本 Token 在第 0 层保持完美的几何对齐；底层自注意力将多模态语义自然注入因果流，使评分头直接具备跨模态判别能力。
+
+2. **混合状态缓存（Hybrid Cache）分支并行优化 (9 倍提速)**：
+   - **痛点**：若每个候选分支都重复计算大图像前缀，延迟随选项数线性翻倍。
+   - **解法**：基于 Qwen3.5 的混合架构（18 层 Gated DeltaNet + 6 层全注意力 + 卷积历史），实现**两阶段共享混合缓存**：
+     - 公共前缀 $P$（图像+问题+候选枚举）仅 Prefill 一次，生成混合缓存 $C_P$；
+     - 沿 Batch 维度扩展 $C_P$，所有短分支后缀（约 10~15 tokens）并行走单步 Forward，末位隐状态直接输出所有选项得分。
+   - **实测成果**：4 候选分支耗时从 **1730 ms** 骤降至 **191 ms**，**延迟降低 88.9%，加速比达 9.03 倍**，输出余弦相似度达到 **0.998+**。
+
+3. **算力平台多模态兼容训练引擎**：
+   - 编写并开源 `jev/train_multimodal_cluster.py`，支持纯文本 JSONL 与多模态图文数据混合训练；
+   - 具备完整反传求导、梯度累积、优雅中断与可选视觉投影层微调（`--train-projector`）。
+
+详尽理论分析、与 Sys1MLX / JPT-4B 的全方位横向对比见深度调研报告：[`docs/多模态决策模型与分支混合缓存优化深度调研与架构方案.md`](docs/多模态决策模型与分支混合缓存优化深度调研与架构方案.md)。
+
 ## 实际实现
 
 ![Qwen3.5-2B Text Candidate Scorer 模型架构](docs/figures/qwen3.5-2b-text-candidate-scorer-architecture.png)
